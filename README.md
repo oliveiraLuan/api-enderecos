@@ -7,7 +7,7 @@ Retorna todos os endereços cadastrados
 *GET /endereco/{cep}* 
 Retorna o endereço correspondente ao cep
 
-*POST /endereco   
+*POST /endereco*   
 Adiciona endereço e retorna mensagem de sucesso
 
 *DELETE /endereco/{}*
