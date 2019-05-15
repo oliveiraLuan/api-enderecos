@@ -3,6 +3,7 @@ package com.endereco.resources;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.endereco.models.Endereco;
 import com.endereco.repository.EnderecoRepository;
-import com.endereco.response.ResponseTransfer;
 
 @RestController
 @RequestMapping(value="/api-enderecos")
@@ -30,23 +30,25 @@ public class EnderecoResource {
 	public Endereco listarEndereco(@PathVariable(value="cep") String cep) {
 		return enderecoRepository.findByCep(cep);
 	}
+
 	@PostMapping(value="/endereco")
 	@ResponseBody
-	public ResponseTransfer adicionarEndereco(@RequestBody Endereco endereco) {
+	public ResponseEntity<Endereco> adicionarEndereco(@RequestBody Endereco endereco) {
 		try {
-			enderecoRepository.save(endereco);
-			return new ResponseTransfer("Sucesso","Endereço cadastrado com sucesso");
+			Endereco novo = enderecoRepository.save(endereco);
+			return ResponseEntity.status(201).body(novo);
 		}catch(Exception e) {
-			return new ResponseTransfer("Erro", e.getMessage().toString());
+			return ResponseEntity.status(500).body(null);
 		}
 	}
 	@DeleteMapping(value="endereco/{cep}")
-	public ResponseTransfer deletarEndereco(@PathVariable(value="cep") String cep) {
+	public ResponseEntity<Endereco> deletarEndereco(@PathVariable(value="cep") String cep) {
 		try {
-			enderecoRepository.delete(enderecoRepository.findByCep(cep));
-			return new ResponseTransfer("Sucesso", "Endereço deletado com sucesso");
+			Endereco cepBuscado = enderecoRepository.findByCep(cep);
+			enderecoRepository.delete(cepBuscado);
+			return ResponseEntity.status(204).body(cepBuscado);
 		}catch(Exception e){
-			return new ResponseTransfer("Erro", e.getMessage().toString());
+			return ResponseEntity.status(400).body(null);
 		}
 		
 	}
